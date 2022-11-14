@@ -1,0 +1,9 @@
+﻿@if (TaskItems is not null)
+{
+    <div class="task-list">
+        @foreach (var taskItem in TaskItems)
+        {
+            <TaskListItem TaskItem="taskItem" />
+        }
+    </div>
+}

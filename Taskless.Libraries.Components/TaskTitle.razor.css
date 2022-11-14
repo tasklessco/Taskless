@@ -1,0 +1,40 @@
+﻿.task-title {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #192226;
+    border-radius: 10px;
+}
+
+.task-title-name {
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+}
+
+.task-title-counter {
+    color: #638997;
+}
+
+.task-item-selected:before {
+    content: '→';
+    color: white;
+    margin-right: 10px;
+}
+
+.task-item-selected-edit:before {
+    color: yellow;
+}
+
+input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: white;
+    font-family: Consolas;
+    font-size: 15px;
+    margin: 0px;
+    padding-right: 10px;
+    border-radius: 10px;
+    margin: 0px;
+    font-weight: bold;
+}

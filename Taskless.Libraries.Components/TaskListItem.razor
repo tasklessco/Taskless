@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Taskless.Libraries.Models;
+
+@if (TaskItem is not null)
+{
+    <div class="task-list-item @GetSelectedCss() @GetEditCss()">
+        <span class="task-list-item-emoji @GetEmojiCss()"></span>
+        @if (TaskItem.EditMode)
+        {
+            <input @ref=inputElement type="text" @bind-value="@TaskItem.Text" @onkeypress=@OnEnter />
+        }
+        else
+        {
+            <span class="task-list-item-text @GetCheckedCss()" style="@(string.IsNullOrEmpty(@TaskItem.Text) ? "height: 18px;" : "")">
+                @TaskItem.Text
+            </span>
+        }
+    </div>
+}

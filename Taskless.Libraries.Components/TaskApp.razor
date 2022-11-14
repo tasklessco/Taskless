@@ -1,0 +1,532 @@
+﻿@page "/"
+@using Taskless.Libraries.Models;
+@using Toolbelt.Blazor.HotKeys;
+
+<div class="task-app">
+    <div class="task-container">
+        @foreach (var taskGroup in TaskGroups)
+        {
+            <TaskGroup TaskGroupItem="taskGroup" />
+        }
+    </div>
+</div>
+
+
+@code {
+    public List<Group> TaskGroups { get; set; }
+    public Guid SelectedGuid { get; set; }
+
+    HotKeysContext HotkeyContext;
+
+    [Inject]
+    public HotKeys HotKeys { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        this.TaskGroups = new();
+
+        this.TaskGroups.Add(GetGroup("Emi", true));
+        //this.TaskGroups.Add(GetGroup("Test", false));
+        //this.TaskGroups.Add(GetGroup("Eze", false));
+
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.Up, MoveUp);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.Down, MoveDown);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.X, ToggleType);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.C, ToggleChecked);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.R, RemoveItem);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.E, ToggleEdit);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.N, NewItem);
+
+        this.HotkeyContext = this.HotKeys.CreateContext()
+              .Add(ModKeys.Shift, Keys.G, NewTaskGroup);
+    }
+
+    public Group GetGroup(string title, bool selected)
+    {
+        var task1 = new Item("This is a 0", false, false, 0, false, Item.TaskType.NONE);
+        var task2 = new Item("This is a 1", true, false, 1, false, Item.TaskType.NONE);
+        var task3 = new Item("This is a 2", false, false, 2, false, Item.TaskType.NONE);
+
+        var taskGroup = new Group(title, 0, selected, false, new());
+
+        taskGroup.TaskItems.Add(task1);
+        taskGroup.TaskItems.Add(task2);
+        taskGroup.TaskItems.Add(task3);
+
+        return taskGroup;
+    }
+
+    public void ToggleType()
+    {
+        foreach (var taskGroup in TaskGroups)
+        {
+            if (taskGroup.SubTaskSelected)
+            {
+                foreach (var item in taskGroup.TaskItems)
+                {
+                    if (item.Selected)
+                    {
+                        var nextType = item.Type + 1;
+                        if ((int)nextType == 6)
+                        {
+                            item.Type = 0;
+                        }
+                        else
+                        {
+                            item.Type++;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void ToggleChecked()
+    {
+        foreach (var taskGroup in TaskGroups)
+        {
+            if (taskGroup.Selected || taskGroup.SubTaskSelected)
+            {
+                if (taskGroup.Selected)
+                {
+                    foreach (var item in taskGroup.TaskItems)
+                    {
+                        item.Checked = true;
+                    }
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+                    foreach (var taskItem in taskGroup.TaskItems)
+                    {
+                        if (taskItem.Selected)
+                        {
+                            taskItem.Checked = !taskItem.Checked;
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void ToggleEdit()
+    {
+        foreach (var taskGroup in TaskGroups)
+        {
+            if (taskGroup.Selected || taskGroup.SubTaskSelected)
+            {
+                if (taskGroup.Selected)
+                {
+                    taskGroup.EditMode = !taskGroup.EditMode;
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+                    foreach (var taskItem in taskGroup.TaskItems)
+                    {
+                        if (taskItem.Selected)
+                        {
+                            taskItem.EditMode = !taskItem.EditMode;
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void RemoveItem()
+    {
+        var hasToRemoveTaskGroup = false;
+        var taskGroupIdToRemove = new Guid();
+
+        foreach (var taskGroup in TaskGroups)
+        {
+            if (taskGroup.Selected || taskGroup.SubTaskSelected)
+            {
+                if (taskGroup.Selected)
+                {
+                    hasToRemoveTaskGroup = true;
+                    taskGroupIdToRemove = taskGroup.Id;
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+                    // Find item to remove
+                    var itemToRemove = taskGroup.TaskItems.SingleOrDefault(x => x.Selected);
+
+                    // Move up first
+                    MoveUp();
+
+                    // Delete prior item
+                    taskGroup.TaskItems.RemoveAll(x => x.Id == itemToRemove.Id);
+                    break;
+                }
+
+                break;
+            }
+        }
+
+        if (hasToRemoveTaskGroup)
+        {
+            // Fetch item
+            var item = TaskGroups.SingleOrDefault(x => x.Id == taskGroupIdToRemove);
+
+            // Remove taskgroup
+            TaskGroups.RemoveAll(x => x.Id == taskGroupIdToRemove);
+
+            // Split list
+            var firstPart = TaskGroups.Skip(0).Take(item.Order + 1).ToList();
+            var secondPart = TaskGroups.Skip(item.Order + 1).ToList();
+
+            // Check if there's something before our item
+            if (firstPart.Count > 0)
+            {
+                firstPart.Last().Selected = true;
+            }
+            else if (secondPart.Count > 0)
+            {
+                firstPart.First().Selected = true;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void NewItem()
+    {
+        for (int j = 0; j < TaskGroups.Count; j++)
+        {
+            var taskGroup = TaskGroups[j];
+            var breakFor = false;
+
+            if (taskGroup.SubTaskSelected || taskGroup.Selected)
+            {
+                // Create new one
+                var newItem = new Item("", false, true, -1, true, Item.TaskType.NONE);
+
+                // If this is selected it means it's on the top level
+                // either create a task in the first place
+                if (taskGroup.Selected)
+                {
+                    taskGroup.Selected = false;
+
+                    // Split list
+                    var firstPart = new List<Item>();
+                    var secondPart = taskGroup.TaskItems.ToList();
+
+                    // Add to first part
+                    firstPart.Add(newItem);
+
+                    // Join lists
+                    var endList = firstPart.Concat(secondPart);
+
+                    // Reassign
+                    taskGroup.TaskItems = endList.ToList();
+
+                    breakFor = true;
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+                    // This should go the next iteration in the taskItems
+                    for (int i = 0; i < taskGroup?.TaskItems.Count; i++)
+                    {
+                        var item = taskGroup.TaskItems[i];
+                        if (item.Selected)
+                        {
+                            // Remove selection
+                            item.Selected = false;
+                            item.EditMode = false;
+                            taskGroup.Selected = false;
+
+                            // Split list
+                            var firstPart = taskGroup.TaskItems.Skip(0).Take(item.Order + 1).ToList();
+                            var secondPart = taskGroup.TaskItems.Skip(item.Order + 1).ToList();
+
+                            // Add to first part
+                            firstPart.Add(newItem);
+
+                            // Join lists
+                            var endList = firstPart.Concat(secondPart).ToList();
+
+                            // Reassign
+                            taskGroup.TaskItems = endList.ToList();
+
+                            breakFor = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (breakFor)
+                {
+                    // Update order
+                    for (int c = 0; c < taskGroup?.TaskItems.Count; c++)
+                    {
+                        Item? taskItem = taskGroup.TaskItems[c];
+                        taskItem.Order = c;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void NewTaskGroup()
+    {
+        var newTaskGroups = new List<Group>();
+
+        if (TaskGroups.Count > 0)
+        {
+            for (int j = 0; j < TaskGroups.Count; j++)
+            {
+                var taskGroup = TaskGroups[j];
+                var breakFor = false;
+
+                if (taskGroup.SubTaskSelected || taskGroup.Selected)
+                {
+                    if (taskGroup.Selected)
+                    {
+                        taskGroup.Selected = false;
+                    }
+                    else
+                    {
+                        foreach (var item in taskGroup.TaskItems)
+                        {
+                            if (item.Selected)
+                            {
+                                item.Selected = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Create new one
+                    var newItem = new Models.Group("", -1, true, true, new());
+
+                    // If this is selected it means it's on the top level
+                    // either create a task in the first place
+                    taskGroup.Selected = false;
+
+                    // Split list
+                    var firstPart = TaskGroups.Skip(0).Take(taskGroup.Order + 1).ToList();
+                    var secondPart = TaskGroups.Skip(taskGroup.Order + 1).ToList();
+
+                    // Add to first part
+                    firstPart.Add(newItem);
+
+                    // Join lists
+                    var endList = firstPart.Concat(secondPart);
+
+                    // Reassign
+                    newTaskGroups = endList.ToList();
+
+                    breakFor = true;
+                }
+                if (breakFor)
+                {
+                    TaskGroups = newTaskGroups;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            // Create new one
+            var newItem = new Models.Group("", -1, true, true, new());
+
+            // Add it
+            TaskGroups.Add(newItem);
+        }
+
+        // Update order
+        for (int c = 0; c < TaskGroups.Count; c++)
+        {
+            Models.Group? taskGroup = TaskGroups[c];
+            taskGroup.Order = c;
+        }
+
+        StateHasChanged();
+    }
+
+    private void MoveDown()
+    {
+        for (int j = 0; j < TaskGroups.Count; j++)
+        {
+            var taskGroup = TaskGroups[j];
+            var breakFor = false;
+
+            if (taskGroup.SubTaskSelected || taskGroup.Selected)
+            {
+                // If this is selected it means it's on the top level
+                // either goes to subtask or next taskgroup
+                if (taskGroup.Selected)
+                {
+                    // Set first as selected
+                    if (taskGroup?.TaskItems.Count > 0)
+                    {
+                        var item = taskGroup.TaskItems[0];
+                        item.Selected = true;
+                        item.EditMode = false;
+                        taskGroup.Selected = false;
+                    }
+                    // Go to next TaskGroup
+                    else
+                    {
+                        if (TaskGroups.Count < j + 1)
+                        {
+                            TaskGroups[j + 1].Selected = true;
+                        }
+                    }
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+
+                    // This should go the next iteration in the taskItems
+                    for (int i = 0; i < taskGroup?.TaskItems.Count; i++)
+                    {
+                        var item = taskGroup.TaskItems[i];
+                        if (item.Selected)
+                        {
+                            // If its inside taks items
+                            if (taskGroup.TaskItems.Count > i + 1)
+                            {
+                                item.Selected = false;
+                                item.EditMode = false;
+                                taskGroup.TaskItems[i + 1].Selected = true;
+                            }
+                            // This should go to next task group
+                            else
+                            {
+                                if (TaskGroups.Count > j + 1)
+                                {
+                                    item.Selected = false;
+                                    TaskGroups[j + 1].Selected = true;
+                                    breakFor = true;
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (breakFor)
+                {
+                    break;
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void MoveUp()
+    {
+        for (int j = 0; j < TaskGroups.Count; j++)
+        {
+            var taskGroup = TaskGroups[j];
+            var breakFor = false;
+
+            if (taskGroup.SubTaskSelected || taskGroup.Selected)
+            {
+                // If this is selected it means it's on the top level
+                // either goes to subtask or next taskgroup
+                if (taskGroup.Selected)
+                {
+                    if (taskGroup.Order > 0)
+                    {
+                        taskGroup.Selected = false;
+                        taskGroup.EditMode = false;
+
+                        if (TaskGroups.Count > j - 1)
+                        {
+                            // If it has items go to last one
+                            if (TaskGroups[j - 1]?.TaskItems.Count > 0)
+                            {
+                                var count = TaskGroups[j - 1].TaskItems.Count - 1;
+                                var item = TaskGroups[j - 1].TaskItems[count];
+                                item.Selected = true;
+                                taskGroup.Selected = false;
+                                breakFor = true;
+                            }
+                            else
+                            {
+                                // Otherwise just select group
+                                TaskGroups[j - 1].Selected = true;
+                                breakFor = true;
+                            }
+                        }
+                    }
+
+                    breakFor = true;
+                }
+                else if (taskGroup.SubTaskSelected)
+                {
+                    // This should go the previous iteration in the taskItems
+                    for (int i = 0; i < taskGroup?.TaskItems.Count; i++)
+                    {
+                        var item = taskGroup.TaskItems[i];
+                        if (item.Selected)
+                        {
+                            // If its inside taks items
+                            if (taskGroup.TaskItems.Count > i - 1 && i - 1 >= 0)
+                            {
+                                item.Selected = false;
+                                item.EditMode = false;
+                                taskGroup.TaskItems[i - 1].Selected = true;
+                                breakFor = true;
+                            }
+                            // This should go to next task group
+                            else
+                            {
+                                item.Selected = false;
+                                item.EditMode = false;
+                                TaskGroups[j].Selected = true;
+                                breakFor = true;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (breakFor)
+                {
+                    break;
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+    }
+}

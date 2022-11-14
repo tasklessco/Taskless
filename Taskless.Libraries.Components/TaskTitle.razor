@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Taskless.Libraries.Models;
+
+<div class="@GetSelectedCss() @GetEditCss()">
+    <span class="task-title">
+        @if (TaskGroup.EditMode)
+        {
+            <input @ref=inputElement style="@GetInputEditWidth()" type="text" @bind-value="@TaskGroup.Title" @onkeypress=@OnEnter onkeydown="this.style.width = (((this.value.length + 1) * 8) + 15) + 'px';" />
+        }
+        else
+        {
+            <span class="task-title-name">@TaskGroup.Title</span>
+        }
+        <span class="task-title-counter">@(TaskGroup.TaskItems.Count(x => x.Checked))/@(TaskGroup.TaskItems.Count())</span>
+    </span>
+</div>
+

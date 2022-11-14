@@ -1,0 +1,67 @@
+﻿.task-list-item {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+
+.task-list-item-checked {
+    text-decoration: line-through;
+    color: #506e7a !important;
+}
+
+.task-list-item-emoji {
+}
+
+.task-list-item-text {
+    color: white;
+    padding-left: 5px;
+}
+
+.task-list-item-emoji-task:before {
+    content: '📑';
+}
+
+.task-list-item-emoji-checked:before {
+    content: '✔️';
+}
+
+.task-list-item-emoji-blocked:before {
+    content: '❌';
+}
+
+.task-list-item-emoji-question:before {
+    content: '❓';
+}
+
+.task-list-item-emoji-exclamation:before {
+    content: '❗';
+}
+
+.task-item-selected {
+}
+
+    .task-item-selected:before {
+        content: '→';
+        color: white;
+        margin-right: 5px;
+    }
+
+.task-item-selected-edit:before {
+    color: yellow;
+}
+
+input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: white;
+    font-family: Consolas;
+    font-size: 16px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 100%;
+}
