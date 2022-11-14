@@ -31,16 +31,21 @@ namespace Taskless.Libraries.Components
         private string GetEditCss() => Item is not null ? (Item.Edit && Item.Selected) ? "task-item-selected-edit" : string.Empty : string.Empty;
         private string GetEmojiCss()
         {
-            return Item.Type switch
+            if (Item is not null)
             {
-                Item.TaskType.CHECKED => "task-list-item-emoji-checked",
-                Item.TaskType.EXCLAMATION => "task-list-item-emoji-exclamation",
-                Item.TaskType.QUESTION => "task-list-item-emoji-question",
-                Item.TaskType.TASK => "task-list-item-emoji-task",
-                Item.TaskType.BLOCKED => "task-list-item-emoji-blocked",
-                Item.TaskType.NONE => string.Empty,
-                _ => string.Empty,
-            };
+                return Item.Type switch
+                {
+                    Item.TaskType.CHECKED => "task-list-item-emoji-checked",
+                    Item.TaskType.EXCLAMATION => "task-list-item-emoji-exclamation",
+                    Item.TaskType.QUESTION => "task-list-item-emoji-question",
+                    Item.TaskType.TASK => "task-list-item-emoji-task",
+                    Item.TaskType.BLOCKED => "task-list-item-emoji-blocked",
+                    Item.TaskType.NONE => string.Empty,
+                    _ => string.Empty,
+                };
+            }
+
+            return string.Empty;
         }
 
         #endregion
@@ -61,7 +66,7 @@ namespace Taskless.Libraries.Components
 
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (Item.Edit && Item is not null)
+            if (Item is not null && Item.Edit)
             {
                 await inputElement.FocusAsync();
             }
