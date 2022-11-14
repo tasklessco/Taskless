@@ -26,7 +26,13 @@ namespace Taskless.Libraries.Components
         #region Overrides
         protected async override Task OnInitializedAsync()
         {
+            // Groups data
             this.Groups = new();
+
+            // Initial data if there's no data before
+            this.Groups.Add(GetInitialData());
+
+            // Asign stuff to keys
             if (this.HotKeys is not null)
             {
                 this.HotkeyContext = this.HotKeys.CreateContext();
@@ -38,13 +44,34 @@ namespace Taskless.Libraries.Components
                     .Add(ModKeys.Shift, Keys.E, ToggleEdit)
                     .Add(ModKeys.Shift, Keys.R, RemoveItem)
                     .Add(ModKeys.Shift, Keys.N, NewItem)
-                    .Add(ModKeys.Shift, Keys.G, NewGroup);
+                    .Add(ModKeys.Shift, Keys.G, NewGroup)
+                    .Add(ModKeys.Shift, Keys.T, ToggleTheme)
+                    .Add(ModKeys.Shift, Keys.H, ShowHelp);
             }
         }
 
         #endregion
 
         #region Data
+
+        private Group GetInitialData()
+        {
+            var group = new Group("Welcome to Taskless", 0, true, false, new());
+
+            group.Items.Add(new("Shift + Up to move up", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + Down to move up", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + G to create a new group", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + N to create a new task", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + D to delete", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + E to edit", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + X to change type", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + C in the task to check or in the group to check all", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + T to change color theme", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + H to show help", false, false, 0, false, Item.TaskType.NONE));
+
+            return group;
+        }
+
         private List<Group> GetData()
         {
             return new();
@@ -282,6 +309,16 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+        }
+
+        private void ToggleTheme()
+        {
+
+        }
+
+        private void ShowHelp()
+        {
+
         }
 
         private void NewGroup()
