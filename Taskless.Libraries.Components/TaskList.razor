@@ -1,9 +1,9 @@
-﻿@if (TaskItems is not null)
+﻿@if (Items is not null)
 {
     <div class="task-list">
-        @foreach (var taskItem in TaskItems)
+        @foreach (var taskItem in Items)
         {
-            <TaskListItem TaskItem="taskItem" />
+            <TaskListItem Item="taskItem" />
         }
     </div>
 }

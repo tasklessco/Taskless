@@ -10,41 +10,63 @@ namespace Taskless.Libraries.Components
 {
     public partial class TaskListItem
     {
+        #region Parameters
+
         [EditorRequired]
         [Parameter]
-        public Item TaskItem { get; set; }
+        public Item? Item { get; set; }
+
+        #endregion
+
+        #region Elements
 
         private ElementReference inputElement;
-        public string GetCheckedCss() => TaskItem.Checked ? "task-list-item-checked" : "";
-        public string GetSelectedCss() => TaskItem.Selected ? "task-item-selected" : "";
-        public string GetEditCss() => (TaskItem.EditMode && TaskItem.Selected) ? "task-item-selected-edit" : "";
-        public string GetEmojiCss()
+
+        #endregion
+
+        #region Style
+
+        private string GetCheckedCss() => Item is not null ? Item.Checked ? "task-list-item-checked" : string.Empty : string.Empty;
+        private string GetSelectedCss() => Item is not null ? Item.Selected ? "task-item-selected" : string.Empty : string.Empty;
+        private string GetEditCss() => Item is not null ? (Item.Edit && Item.Selected) ? "task-item-selected-edit" : string.Empty : string.Empty;
+        private string GetEmojiCss()
         {
-            return TaskItem.Type switch
+            return Item.Type switch
             {
                 Item.TaskType.CHECKED => "task-list-item-emoji-checked",
                 Item.TaskType.EXCLAMATION => "task-list-item-emoji-exclamation",
                 Item.TaskType.QUESTION => "task-list-item-emoji-question",
                 Item.TaskType.TASK => "task-list-item-emoji-task",
                 Item.TaskType.BLOCKED => "task-list-item-emoji-blocked",
-                _ => "",
+                Item.TaskType.NONE => string.Empty,
+                _ => string.Empty,
             };
         }
 
+        #endregion
+
+        #region Methods
+
         public void OnEnter(KeyboardEventArgs keyboardEventArgs)
         {
-            if (keyboardEventArgs.Key.ToLower() == "enter" || keyboardEventArgs.Key.ToLower() == "escape")
+            if (keyboardEventArgs.Key.ToLower() == "enter" && Item is not null)
             {
-                this.TaskItem.EditMode = false;
+                Item.Edit = false;
             }
         }
 
+        #endregion
+
+        #region Overrides
+
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (TaskItem.EditMode)
+            if (Item.Edit && Item is not null)
             {
                 await inputElement.FocusAsync();
             }
         }
+
+        #endregion
     }
 }

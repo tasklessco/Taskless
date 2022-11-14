@@ -3,15 +3,18 @@
 
 <div class="@GetSelectedCss() @GetEditCss()">
     <span class="task-title">
-        @if (TaskGroup.EditMode)
+        @if (Group is not null)
         {
-            <input @ref=inputElement style="@GetInputEditWidth()" type="text" @bind-value="@TaskGroup.Title" @onkeypress=@OnEnter onkeydown="this.style.width = (((this.value.length + 1) * 8) + 15) + 'px';" />
+            @if (Group.Edit)
+            {
+                <input @ref=inputElement style="@GetInputEditWidth()" type="text" @bind-value="@Group.Title" @onkeypress=@OnEnter onkeydown="this.style.width = (((this.value.length + 1) * 8) + 15) + 'px';" />
+            }
+            else
+            {
+                <span class="task-title-name">@Group.Title</span>
+            }
+            <span class="task-title-counter">@(Group.Items.Count(x => x.Checked))/@(Group.Items.Count())</span>
         }
-        else
-        {
-            <span class="task-title-name">@TaskGroup.Title</span>
-        }
-        <span class="task-title-counter">@(TaskGroup.TaskItems.Count(x => x.Checked))/@(TaskGroup.TaskItems.Count())</span>
     </span>
 </div>
 

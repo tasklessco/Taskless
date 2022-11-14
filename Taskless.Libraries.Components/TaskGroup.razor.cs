@@ -11,6 +11,6 @@ namespace Taskless.Libraries.Components
     {
         [Parameter]
         [EditorRequired]
-        public Group TaskGroupItem { get; set; }
+        public Group Group { get; set; }
     }
 }

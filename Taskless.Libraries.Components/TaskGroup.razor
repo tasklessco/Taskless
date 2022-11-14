@@ -1,8 +1,8 @@
-﻿@if (TaskGroupItem is not null)
+﻿@if (Group is not null)
 {
     <div class="task-group">
-        <TaskTitle TaskGroup="TaskGroupItem" />
-        <TaskList TaskItems="TaskGroupItem.TaskItems" />
+        <TaskTitle Group="Group" />
+        <TaskList Items="Group.Items" />
     </div>
 }
 

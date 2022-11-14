@@ -7,6 +7,6 @@ namespace Taskless.Libraries.Components
     {
         [Parameter]
         [EditorRequired]
-        public List<Item> TaskItems { get; set; }
+        public List<Item> Items { get; set; }
     }
 }
