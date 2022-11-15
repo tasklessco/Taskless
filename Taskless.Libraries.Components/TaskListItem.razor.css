@@ -7,14 +7,14 @@
 
 .task-list-item-checked {
     text-decoration: line-through;
-    color: #506e7a !important;
+    color: var(--task-list-item-checked) !important;
 }
 
 .task-list-item-emoji {
 }
 
 .task-list-item-text {
-    color: white;
+    color: var(--task-list-item-text);
     padding-left: 5px;
 }
 
@@ -43,19 +43,19 @@
 
     .task-item-selected:before {
         content: '→';
-        color: white;
+        color: var(--task-item-selected-before);
         margin-right: 5px;
     }
 
 .task-item-selected-edit:before {
-    color: yellow;
+    color: var(--task-item-selected-edit);
 }
 
 input {
     border: none;
     background: transparent;
     outline: none;
-    color: white;
+    color: var(--task-item-input);
     font-family: Consolas;
     font-size: 16px;
     margin: 0px;
