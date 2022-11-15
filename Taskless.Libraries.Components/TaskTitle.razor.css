@@ -1,35 +1,35 @@
 ﻿.task-title {
     padding: 10px;
     margin-bottom: 10px;
-    background-color: #192226;
+    background-color: var(--task-title-background);
     border-radius: 10px;
 }
 
 .task-title-name {
     font-weight: bold;
-    color: white;
+    color: var(--task-title-name);
     margin-right: 10px;
 }
 
 .task-title-counter {
-    color: #638997;
+    color: var(--task-title-counter);
 }
 
 .task-item-selected:before {
     content: '→';
-    color: white;
+    color: var(--task-item-selected);
     margin-right: 10px;
 }
 
 .task-item-selected-edit:before {
-    color: yellow;
+    color: var(--task-item-selected-edit);
 }
 
 input {
     border: none;
     background: transparent;
     outline: none;
-    color: white;
+    color: var(--task-title-input);
     font-family: Consolas;
     font-size: 15px;
     margin: 0px;
