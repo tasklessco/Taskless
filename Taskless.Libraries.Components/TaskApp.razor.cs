@@ -56,18 +56,18 @@ namespace Taskless.Libraries.Components
 
         private Group GetInitialData()
         {
-            var group = new Group("Welcome to Taskless", 0, true, false, new());
+            var group = new Group("Welcome to Task(keyboard)less", 0, true, false, new());
 
             group.Items.Add(new("Shift + Up to move up", false, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + Down to move up", false, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + G to create a new group", false, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + N to create a new task", false, false, 0, false, Item.TaskType.NONE));
-            group.Items.Add(new("Shift + D to delete", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + R to remove item or entire group", false, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + E to edit", false, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + X to change type", false, false, 0, false, Item.TaskType.NONE));
-            group.Items.Add(new("Shift + C in the task to check or in the group to check all", false, false, 0, false, Item.TaskType.NONE));
-            group.Items.Add(new("Shift + T to change color theme", false, false, 0, false, Item.TaskType.NONE));
-            group.Items.Add(new("Shift + H to show help", false, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + C to check an item or entire group", false, false, 0, false, Item.TaskType.EXCLAMATION));
+            group.Items.Add(new("Shift + T to change color theme", false, false, 0, true, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + H to show help", false, false, 0, true, Item.TaskType.NONE));
 
             return group;
         }
