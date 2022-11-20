@@ -16,6 +16,9 @@ namespace Taskless.Libraries.Models
         public bool SubTaskSelected => Items.Any(x => x.Selected);
         public List<Item> Items { get; set; }
 
+
+        public Group() { }
+
         public Group(string title, int order, bool selected, bool editMode, List<Item> taskItems)
         {
             Id = Guid.NewGuid();
