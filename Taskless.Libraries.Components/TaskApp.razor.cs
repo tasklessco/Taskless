@@ -1,10 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using Taskless.Libraries.Models;
 using Toolbelt.Blazor.HotKeys;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Taskless.Libraries.Components
 {
@@ -18,8 +27,16 @@ namespace Taskless.Libraries.Components
         #endregion
 
         #region Injects
+
         [Inject]
         public HotKeys? HotKeys { get; set; }
+
+        [Inject]
+        public IJSRuntime? JSRuntime { get; set; }
+
+        [Inject]
+        public ILocalStorageService LocalStorage { get; set; }
+
 
         #endregion
 
@@ -27,10 +44,7 @@ namespace Taskless.Libraries.Components
         protected async override Task OnInitializedAsync()
         {
             // Groups data
-            this.Groups = new();
-
-            // Initial data if there's no data before
-            this.Groups.Add(GetInitialData());
+            this.Groups = await GetData();
 
             // Asign stuff to keys
             if (this.HotKeys is not null)
@@ -46,7 +60,8 @@ namespace Taskless.Libraries.Components
                     .Add(ModKeys.Shift, Keys.N, NewItem)
                     .Add(ModKeys.Shift, Keys.G, NewGroup)
                     .Add(ModKeys.Shift, Keys.T, ToggleTheme)
-                    .Add(ModKeys.Shift, Keys.H, ShowHelp);
+                    .Add(ModKeys.Shift, Keys.H, ShowHelp)
+                    .Add(ModKeys.Shift, Keys.S, SaveDataAsync);
             }
         }
 
@@ -72,9 +87,31 @@ namespace Taskless.Libraries.Components
             return group;
         }
 
-        private List<Group> GetData()
+        private async Task<List<Group>> GetData()
         {
+            if (JSRuntime is not null)
+            {
+                var data = await LocalStorage.GetItemAsync<List<Group>?>("data");
+
+                if (data is not null)
+                {
+                    return data;
+                }
+                else
+                {
+                    return new();
+                }
+            }
+
             return new();
+        }
+
+        private async Task SaveDataAsync()
+        {
+            if (JSRuntime is not null)
+            {
+                await LocalStorage.SetItemAsync("data", this.Groups);
+            }
         }
 
         #endregion
@@ -311,9 +348,12 @@ namespace Taskless.Libraries.Components
             StateHasChanged();
         }
 
-        private void ToggleTheme()
+        private async void ToggleTheme()
         {
-
+            if (JSRuntime is not null)
+            {
+                await JSRuntime.InvokeVoidAsync("toggleTheme");
+            }
         }
 
         private void ShowHelp()

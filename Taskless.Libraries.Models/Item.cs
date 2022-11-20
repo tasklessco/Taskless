@@ -17,6 +17,11 @@ namespace Taskless.Libraries.Models
 
         public bool Edit { get; set; }
 
+        public Item()
+        {
+
+        }
+
         public Item(string text, bool _checked, bool edit, int order, bool selected, TaskType type)
         {
             Id = Guid.NewGuid();
