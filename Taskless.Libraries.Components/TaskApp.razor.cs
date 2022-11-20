@@ -83,6 +83,7 @@ namespace Taskless.Libraries.Components
             group.Items.Add(new("Shift + C to check an item or entire group", false, false, 0, false, Item.TaskType.EXCLAMATION));
             group.Items.Add(new("Shift + T to change color theme", true, false, 0, false, Item.TaskType.NONE));
             group.Items.Add(new("Shift + H to show help", true, false, 0, false, Item.TaskType.NONE));
+            group.Items.Add(new("Shift + S to save", true, false, 0, false, Item.TaskType.NONE));
 
             return group;
         }
@@ -99,7 +100,10 @@ namespace Taskless.Libraries.Components
                 }
                 else
                 {
-                    return new();
+                    List<Group> res = new();
+                    res.Add(GetInitialData());
+
+                    return res;
                 }
             }
 
