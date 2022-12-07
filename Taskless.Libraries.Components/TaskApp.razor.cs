@@ -152,6 +152,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private void ToggleChecked()
@@ -186,6 +188,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private void ToggleEdit()
@@ -277,6 +281,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private void NewItem()
@@ -350,6 +356,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private async void ToggleTheme()
@@ -435,6 +443,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private void MoveDown()
@@ -508,6 +518,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         private void MoveUp()
@@ -589,6 +601,8 @@ namespace Taskless.Libraries.Components
             }
 
             StateHasChanged();
+
+            SaveDataAsync().Wait();
         }
 
         #endregion
