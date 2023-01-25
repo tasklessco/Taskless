@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Taskless.Libraries.Models;
-using Toolbelt.Blazor.HotKeys;
+using Toolbelt.Blazor.HotKeys2;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Taskless.Libraries.Components
@@ -51,17 +51,17 @@ namespace Taskless.Libraries.Components
             {
                 this.HotkeyContext = this.HotKeys.CreateContext();
                 this.HotkeyContext
-                    .Add(ModKeys.Shift, Keys.Up, MoveUp)
-                    .Add(ModKeys.Shift, Keys.Down, MoveDown)
-                    .Add(ModKeys.Shift, Keys.X, ToggleType)
-                    .Add(ModKeys.Shift, Keys.C, ToggleChecked)
-                    .Add(ModKeys.Shift, Keys.E, ToggleEdit)
-                    .Add(ModKeys.Shift, Keys.R, RemoveItem)
-                    .Add(ModKeys.Shift, Keys.N, NewItem)
-                    .Add(ModKeys.Shift, Keys.G, NewGroup)
-                    .Add(ModKeys.Shift, Keys.T, ToggleTheme)
-                    .Add(ModKeys.Shift, Keys.H, ShowHelp)
-                    .Add(ModKeys.Shift, Keys.S, SaveDataAsync);
+                    .Add(ModCode.Shift, Code.ArrowUp, async () => { await MoveUp(); })
+                    .Add(ModCode.Shift, Code.ArrowDown, async () => { await MoveDown(); })
+                    .Add(ModCode.Shift, Code.X, async () => { await ToggleType(); })
+                    .Add(ModCode.Shift, Code.C, async () => { await ToggleChecked(); })
+                    .Add(ModCode.Shift, Code.E, async () => { await ToggleEdit(); })
+                    .Add(ModCode.Shift, Code.R, async () => { await RemoveItem(); })
+                    .Add(ModCode.Shift, Code.N, async () => { await NewItem(); })
+                    .Add(ModCode.Shift, Code.G, async () => { await NewGroup(); })
+                    .Add(ModCode.Shift, Code.T, async () => { await ToggleTheme(); })
+                    .Add(ModCode.Shift, Code.H, async () => { await ShowHelp(); })
+                    .Add(ModCode.Shift, Code.S, async () => { await SaveDataAsync(); });
             }
         }
 
@@ -122,7 +122,7 @@ namespace Taskless.Libraries.Components
 
         #region Management
 
-        private void ToggleType()
+        private async Task ToggleType()
         {
             if (Groups is not null)
             {
@@ -153,10 +153,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private void ToggleChecked()
+        private async Task ToggleChecked()
         {
             if (Groups is not null)
             {
@@ -189,10 +189,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private void ToggleEdit()
+        private async Task ToggleEdit()
         {
             if (Groups is not null)
             {
@@ -223,7 +223,7 @@ namespace Taskless.Libraries.Components
             StateHasChanged();
         }
 
-        private void RemoveItem()
+        private async Task RemoveItem()
         {
             if (Groups is not null)
             {
@@ -241,13 +241,15 @@ namespace Taskless.Libraries.Components
                         else if (taskGroup.SubTaskSelected)
                         {
                             // Find item to remove
-                            var itemToRemove = taskGroup.Items.SingleOrDefault(x => x.Selected);
+                            var itemToRemove = taskGroup.Items.Single(x => x.Selected);
+
+                            var id = itemToRemove?.Id;
                             if (itemToRemove is not null)
                             {
                                 // Move up first
                                 MoveUp();
                                 // Delete prior item
-                                taskGroup.Items.RemoveAll(x => x.Id == itemToRemove.Id);
+                                taskGroup.Items.RemoveAll(x => x.Id == id);
                                 break;
                             }
                         }
@@ -282,10 +284,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private void NewItem()
+        private async Task NewItem()
         {
             if (Groups is not null)
             {
@@ -357,10 +359,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private async void ToggleTheme()
+        private async Task ToggleTheme()
         {
             if (JSRuntime is not null)
             {
@@ -368,12 +370,12 @@ namespace Taskless.Libraries.Components
             }
         }
 
-        private void ShowHelp()
+        private async Task ShowHelp()
         {
 
         }
 
-        private void NewGroup()
+        private async Task NewGroup()
         {
             if (Groups is not null)
             {
@@ -444,10 +446,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private void MoveDown()
+        private async Task MoveDown()
         {
             if (Groups is not null)
             {
@@ -519,10 +521,10 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
-        private void MoveUp()
+        private async Task MoveUp()
         {
             if (Groups is not null)
             {
@@ -602,7 +604,7 @@ namespace Taskless.Libraries.Components
 
             StateHasChanged();
 
-            SaveDataAsync().Wait();
+            await SaveDataAsync();
         }
 
         #endregion
