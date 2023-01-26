@@ -18,16 +18,16 @@
 
 [data-theme="dark"] {
     --spinner-color: #FFF;
-    --app-background: #233035;
-    --task-title-background: #192226;
+    --app-background: #1F1F1F;
+    --task-title-background: #0a0a0a;
     --task-title-name: white;
     --task-item-selected: white;
-    --task-title-counter: #638997;
+    --task-title-counter: #adadad;
     --task-title-input: white;
-    --task-list-item-checked: #506e7a;
+    --task-list-item-checked: #adadad;
     --task-list-item-text: white;
     --task-item-selected-before: white;
-    --task-item-selected-edit: yellow;
+    --task-item-selected-edit: #7f85f5;
     --task-item-input: white;
 }
 
@@ -35,12 +35,14 @@
 * {
     transition: all 1000ms;
     text-rendering: optimizeLegibility;
+    caret-shape: block !important;
 }
 
 body {
     background-color: var(--app-background);
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 
@@ -71,4 +73,24 @@ body {
     100% {
         transform: rotate(360deg);
     }
+}
+
+
+
+::-webkit-scrollbar {
+    background: transparent;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--task-title-background);
+    border-radius: 0.9em;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }

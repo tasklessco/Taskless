@@ -11,8 +11,10 @@
 }
 
 .task-container {
-    padding-left: 40px;
-    padding-top: 45px
+    padding-left: 10px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
 }
 
 
