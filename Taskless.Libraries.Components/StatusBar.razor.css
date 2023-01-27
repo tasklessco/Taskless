@@ -1,0 +1,27 @@
+﻿.status-bar {
+    z-index: 100;
+    position: absolute;
+    top: 15px;
+    right: 0px;
+    width: 35px;
+    display: flex;
+    /*font-size: 15px;*/
+    color: var(--task-list-item-checked) !important;
+    font-weight: bold;
+}
+
+a {
+    color: var(--task-list-item-checked) !important;
+}
+
+.status-bar-item {
+    padding-left: 5PX;
+}
+
+.saved {
+    color: darkgreen;
+}
+
+.saving {
+    color: orange;
+}

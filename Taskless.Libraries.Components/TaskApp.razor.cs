@@ -24,6 +24,8 @@ namespace Taskless.Libraries.Components
         private List<Group>? Groups;
         private HotKeysContext? HotkeyContext;
 
+        public bool Saved { get; set; } = false;
+
         #endregion
 
         #region Injects
@@ -98,6 +100,7 @@ namespace Taskless.Libraries.Components
             if (JSRuntime is not null)
             {
                 var data = await LocalStorage.GetItemAsync<List<Group>?>("data");
+                Saved = true;
 
                 if (data is not null)
                 {
@@ -117,10 +120,16 @@ namespace Taskless.Libraries.Components
 
         private async Task SaveDataAsync()
         {
+            Saved = false;
+            StateHasChanged();
+
             if (JSRuntime is not null)
             {
                 await LocalStorage.SetItemAsync("data", this.Groups);
             }
+
+            Saved = true;
+            StateHasChanged();
         }
 
         #endregion
