@@ -53,6 +53,8 @@ namespace Taskless.Libraries.Components
                 this.HotkeyContext
                     .Add(ModCode.Shift, Code.ArrowUp, async () => { await MoveUp(); })
                     .Add(ModCode.Shift, Code.ArrowDown, async () => { await MoveDown(); })
+                    .Add(ModCode.Shift, Code.PageUp, async () => { await MoveGroupUp(); })
+                    .Add(ModCode.Shift, Code.PageDown, async () => { await MoveGroupDown(); })
                     .Add(ModCode.Shift, Code.X, async () => { await ToggleType(); })
                     .Add(ModCode.Shift, Code.C, async () => { await ToggleChecked(); })
                     .Add(ModCode.Shift, Code.E, async () => { await ToggleEdit(); })
@@ -61,6 +63,7 @@ namespace Taskless.Libraries.Components
                     .Add(ModCode.Shift, Code.G, async () => { await NewGroup(); })
                     .Add(ModCode.Shift, Code.T, async () => { await ToggleTheme(); })
                     .Add(ModCode.Shift, Code.H, async () => { await ShowHelp(); })
+                    .Add(ModCode.Shift, Code.F, async () => { await RestartSelection(); })
                     .Add(ModCode.Shift, Code.S, async () => { await SaveDataAsync(); });
             }
         }
@@ -598,6 +601,134 @@ namespace Taskless.Libraries.Components
                         {
                             break;
                         }
+                    }
+                }
+            }
+
+            StateHasChanged();
+
+            await SaveDataAsync();
+        }
+
+        private async Task MoveGroupUp()
+        {
+            if (Groups is not null)
+            {
+                for (int j = 0; j < Groups.Count; j++)
+                {
+                    var taskGroup = Groups[j];
+                    var breakFor = false;
+                    if (taskGroup.SubTaskSelected || taskGroup.Selected)
+                    {
+                        if (j != 0)
+                        {
+                            // Unselect everything
+                            foreach (var item in Groups)
+                            {
+                                item.Selected = false;
+
+                                foreach (var subItems in item.Items)
+                                {
+                                    subItems.Selected = false;
+                                }
+                            }
+
+
+                            // Select next group
+                            if (Groups.Count > j - 1)
+                            {
+                                Groups[j - 1].Selected = true;
+                                breakFor = true;
+                            }
+
+                            if (breakFor)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            StateHasChanged();
+
+            await SaveDataAsync();
+        }
+
+        private async Task MoveGroupDown()
+        {
+            if (Groups is not null)
+            {
+                for (int j = 0; j < Groups.Count; j++)
+                {
+                    var taskGroup = Groups[j];
+                    var breakFor = false;
+                    if (taskGroup.SubTaskSelected || taskGroup.Selected)
+                    {
+                        if (j + 1 != Groups.Count)
+                        {
+                            // Unselect everything
+                            foreach (var item in Groups)
+                            {
+                                item.Selected = false;
+
+                                foreach (var subItems in item.Items)
+                                {
+                                    subItems.Selected = false;
+                                }
+                            }
+
+
+                            // Select next group
+                            if (Groups.Count >= j + 1)
+                            {
+                                Groups[j + 1].Selected = true;
+                                breakFor = true;
+                            }
+
+                            if (breakFor)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            StateHasChanged();
+
+            await SaveDataAsync();
+        }
+
+        private async Task RestartSelection()
+        {
+            if (Groups is not null)
+            {
+                for (int j = 0; j < Groups.Count; j++)
+                {
+                    var breakFor = false;
+                    // Unselect everything
+                    foreach (var item in Groups)
+                    {
+                        item.Selected = false;
+
+                        foreach (var subItems in item.Items)
+                        {
+                            subItems.Selected = false;
+                        }
+                    }
+
+
+                    // Select next group
+                    if (Groups.Count > 0)
+                    {
+                        Groups[0].Selected = true;
+                        breakFor = true;
+                    }
+
+                    if (breakFor)
+                    {
+                        break;
                     }
                 }
             }
