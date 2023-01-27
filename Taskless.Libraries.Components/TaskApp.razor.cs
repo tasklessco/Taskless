@@ -64,6 +64,8 @@ namespace Taskless.Libraries.Components
                     .Add(ModCode.Shift, Code.T, async () => { await ToggleTheme(); })
                     .Add(ModCode.Shift, Code.H, async () => { await ShowHelp(); })
                     .Add(ModCode.Shift, Code.F, async () => { await RestartSelection(); })
+                    .Add(ModCode.Shift, Code.Home, async () => { await GoToFirstInGroup(); })
+                    .Add(ModCode.Shift, Code.End, async () => { await GoToLastInGroup(); })
                     .Add(ModCode.Shift, Code.S, async () => { await SaveDataAsync(); });
             }
         }
@@ -690,6 +692,92 @@ namespace Taskless.Libraries.Components
                             {
                                 break;
                             }
+                        }
+                    }
+                }
+            }
+
+            StateHasChanged();
+
+            await SaveDataAsync();
+        }
+
+        private async Task GoToFirstInGroup()
+        {
+            if (Groups is not null)
+            {
+                for (int j = 0; j < Groups.Count; j++)
+                {
+                    var taskGroup = Groups[j];
+                    var breakFor = false;
+                    if (taskGroup.SubTaskSelected || taskGroup.Selected)
+                    {
+                        // Unselect everything
+                        foreach (var item in Groups)
+                        {
+                            item.Selected = false;
+
+                            foreach (var subItems in item.Items)
+                            {
+                                subItems.Selected = false;
+                            }
+                        }
+
+
+                        // Select first of group
+                        if (taskGroup.Items.Count >= 0)
+                        {
+                            taskGroup.Items[0].Selected = true;
+                            breakFor = true;
+                        }
+
+                        if (breakFor)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            StateHasChanged();
+
+            await SaveDataAsync();
+        }
+
+        private async Task GoToLastInGroup()
+        {
+            if (Groups is not null)
+            {
+                for (int j = 0; j < Groups.Count; j++)
+                {
+                    var taskGroup = Groups[j];
+                    var breakFor = false;
+                    if (taskGroup.SubTaskSelected || taskGroup.Selected)
+                    {
+                        // Unselect everything
+                        foreach (var item in Groups)
+                        {
+                            item.Selected = false;
+
+                            foreach (var subItems in item.Items)
+                            {
+                                subItems.Selected = false;
+                            }
+                        }
+
+                        // Select first of group
+                        for (int i = 0; i < taskGroup.Items.Count; i++)
+                        {
+                            if (i + 1 == taskGroup.Items.Count)
+                            {
+                                taskGroup.Items[i].Selected = true;
+                                breakFor = true;
+                            }
+                        }
+
+                        if (breakFor)
+                        {
+                            break;
                         }
                     }
                 }
