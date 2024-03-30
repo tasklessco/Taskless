@@ -52,23 +52,26 @@ namespace Taskless.Libraries.Components
             if (this.HotKeys is not null)
             {
                 this.HotkeyContext = this.HotKeys.CreateContext();
+                var options = new HotKeyOptions();
+
+
                 this.HotkeyContext
-                    .Add(ModCode.Shift, Code.ArrowUp, async () => { await MoveUp(); })
-                    .Add(ModCode.Shift, Code.ArrowDown, async () => { await MoveDown(); })
-                    .Add(ModCode.Shift, Code.PageUp, async () => { await MoveGroupUp(); })
-                    .Add(ModCode.Shift, Code.PageDown, async () => { await MoveGroupDown(); })
-                    .Add(ModCode.Shift, Code.X, async () => { await ToggleType(); })
-                    .Add(ModCode.Shift, Code.C, async () => { await ToggleChecked(); })
-                    .Add(ModCode.Shift, Code.E, async () => { await ToggleEdit(); })
-                    .Add(ModCode.Shift, Code.R, async () => { await RemoveItem(); })
-                    .Add(ModCode.Shift, Code.N, async () => { await NewItem(); })
-                    .Add(ModCode.Shift, Code.G, async () => { await NewGroup(); })
-                    .Add(ModCode.Shift, Code.T, async () => { await ToggleTheme(); })
-                    .Add(ModCode.Shift, Code.H, async () => { await ShowHelp(); })
-                    .Add(ModCode.Shift, Code.F, async () => { await RestartSelection(); })
-                    .Add(ModCode.Shift, Code.Home, async () => { await GoToFirstInGroup(); })
-                    .Add(ModCode.Shift, Code.End, async () => { await GoToLastInGroup(); })
-                    .Add(ModCode.Shift, Code.S, async () => { await SaveDataAsync(); });
+                    .Add(ModCode.Shift, Code.ArrowUp, MoveUp)
+                    .Add(ModCode.Shift, Code.ArrowDown, MoveDown)
+                    .Add(ModCode.Shift, Code.PageUp, MoveGroupUp)
+                    .Add(ModCode.Shift, Code.PageDown, MoveGroupDown)
+                    .Add(ModCode.Shift, Code.X, ToggleType)
+                    .Add(ModCode.Shift, Code.C, ToggleChecked)
+                    .Add(ModCode.Shift, Code.E, ToggleEdit)
+                    .Add(ModCode.Shift, Code.R, RemoveItem)
+                    .Add(ModCode.Shift, Code.N, NewItem)
+                    .Add(ModCode.Shift, Code.G, NewGroup)
+                    .Add(ModCode.Shift, Code.T, ToggleTheme)
+                    .Add(ModCode.Shift, Code.H, ShowHelp)
+                    .Add(ModCode.Shift, Code.F, RestartSelection)
+                    .Add(ModCode.Shift, Code.Home, GoToFirstInGroup)
+                    .Add(ModCode.Shift, Code.End, GoToLastInGroup)
+                    .Add(ModCode.Shift, Code.S, SaveDataAsync);
             }
         }
 
